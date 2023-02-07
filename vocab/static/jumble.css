@@ -10,6 +10,6 @@
  * like text color, italics, etc. 
  */
 
-.message { 
+#message { 
     color: red;
 }

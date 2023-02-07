@@ -30,6 +30,7 @@
       <!-- write any routing code in the Flask application. -->
       <link rel="stylesheet" href="/static/jumble.css" />
    </head>
+
    <body>
       <div class="container">
          <div class="row">
@@ -73,31 +74,64 @@
          <br />
          <div class="row">
             <div class="col-xs-6 text-center">
-               <form id="entry" method="POST" action="/_check">
+               <form id="entry" method="GET" action="/_check">
                   <label for="attempt">Word:</label>
                   <input id="attempt" name="attempt" type="text" width="15"
                      autocomplete="off"  autofocus />
-                  <input type="submit" name="try" />
+                  <!-- <input type="submit" name="try" /> -->
                </form>
             </div>
          </div>
          <br />
-         {% if session.matches|length is not equalto 0  %}
-         <h2>You found </h2>
-         <p id="results">
-            {% for match in session.matches %}
-            {{ match }}
-            {% endfor %}
-         </p>
-         {% endif %}
-         {% with messages = get_flashed_messages() %}
-         {% if messages %}
-         <!-- Mismatch, already found, etc. "flashed" from Python -->
-         {% for message in messages %}
-         <p class="message">{{ message }}</p>
-         {% endfor %}
-         {% endif %}
-         {% endwith %}
+
+         <!-- error message display -->
+         <div class="row">
+            <div class="col-xs-6 text-center">
+               <p id="message"></p>
+            </div>
+            <!-- col -->
+         </div>
+
+         <!-- words found -->
+         <p id="found"> </p>
+
+         <script>
+            // Suppress normal form submission
+            $("#entry").submit( function(event) {
+               event.preventDefault();
+              });
+
+            $("#attempt").keyup(function(event) {
+               var txt = $("#attempt").val();  // Current content of the input field
+               var keycode = event.which;      // They key that just went up
+               var letter = String.fromCharCode(keycode);
+
+               if (! "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(letter)) { return }
+
+               $.getJSON( "/_check", { text: txt },
+                  function(data) {
+                     rsval = data.result.status;
+                     if (rsval=="word_found") {
+                        $("#found").append(txt + " ");
+                        $("#attempt").val("");
+                        $("#message").html("");
+                     }
+                     else if (rsval=="success") {
+                        window.location.replace("/success");
+                     }
+                     else if (rsval=="not_matched"){
+                        $("#message").html(`<b>${txt}</b> is not in the vocabulary`);
+                     }
+                     else if (rsval=="already_found"){
+                        $("#message").html(`<b>${txt}</b> is already found`);
+                     }
+                     else{
+                        $("#message").html(`<b>${txt}</b> cannot be made from the anagram`);
+                     }
+                  }
+               );
+            });
+         </script>
       </div>
       <!-- container -->
    </body>
