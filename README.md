@@ -1,7 +1,7 @@
 # UOCIS322 - Project 3 #
 
 Author: Sewon Sohn\
-Contact: ssohn@uoregon.edu\
+Contact: ssohn@uoregon.edu
 
 The program is a simple anagram game designed for English-learning students in elementary and middle school. It presents a list of words to students and an anagram. The anagram is a jumble of some of the words, which are randomly chosen. Students attempt to type words that can be created from the jumble. When a matching word is typed, it is added to a list of solved words.
 
